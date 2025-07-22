@@ -13,11 +13,30 @@ jobs: # on 상황에서 수행할 작업들 정의
      
      defaults:
       run:
-        working-directory: backend
+        working-directory: ./turip/backend
         
      steps: 
      - name: Checkout code
        uses: actions/checkout@v4 # 저장소 코드 체크아웃
+       with:
+          path: turip
+
+          # --- 디버깅 스텝 (문제 해결 후 제거 가능) ---
+     - name: Debug - Verify actual checkout path
+       run: |
+         echo "--- Debug Info ---"
+         echo "Current directory after checkout (should be workspace root):"
+         pwd
+         echo "Contents of workspace root (should see 'my-project-checkout' directory here):"
+         ls -la
+         echo "Contents of 'my-project-checkout' directory (your checked out code):"
+         ls -la my-project-checkout/
+         echo "Contents of 'my-project-checkout/backend' directory:"
+         ls -la my-project-checkout/backend/
+         echo "Expected working-directory path for 'run' steps (based on this config):"
+         echo "${{ github.workspace }}/my-project-checkout/backend"
+         echo "--- End Debug Info ---"
+      # --- 디버깅 스텝 끝 ---
 
      - name: Set up Gradle
        uses: gradle/actions/setup-gradle@v3
