@@ -70,7 +70,7 @@ jobs:
           echo "JAR file located at: $JAR_FILE"
 
           echo "Stopping existing application..."
-          CURRENT_PID=$(sudo lsof -t -i :80 | xargs -r pgrep -f java)
+          CURRENT_PID=$(ps aux | grep "$JAR_NAME" | grep -v grep | awk '{print $2}')
           if [ -z "$CURRENT_PID" ]; then
               echo "No existing application found on port 80."
           else
