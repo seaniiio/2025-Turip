@@ -81,4 +81,3 @@ jobs:
 
           echo "Starting application..."
           nohup java -jar "$TARGET_JAR" > /dev/null 2>&1 &
-          fi
