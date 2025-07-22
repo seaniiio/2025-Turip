@@ -69,18 +69,12 @@ jobs:
           echo "JAR_NAME=$(basename $JAR_FILE)" >> $GITHUB_OUTPUT
           echo "JAR file located at: $JAR_FILE"
 
-          echo "Stopping existing application..."
-          CURRENT_PID=$(ps aux | grep "$JAR_NAME" | grep -v grep | awk '{print $2}')
-          if [ -z "$CURRENT_PID" ]; then
-              echo "No existing application found on port 80."
-          else
-              echo "Found existing process on port 80 with PID: $CURRENT_PID. Killing it..."
-              sudo kill -15 "$CURRENT_PID"
-              sleep 10
-              if sudo kill -0 "$CURRENT_PID" 2>/dev/null; then
-                  echo "Process $CURRENT_PID did not terminate gracefully. Forcing kill..."
-                  sudo kill -9 "$CURRENT_PID"
-              fi
+      - name: Kill Existing Server On Port 80
+        run: |
+          PID=$(sudo lsof -t -i :80 || true)
+          if [ -n "$PID" ]; then
+            echo "Killing existing process: $PID"
+            kill -9 $PID
           fi
     
       - name: Deploy application (local execution in EC2)
