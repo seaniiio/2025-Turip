@@ -1,4 +1,4 @@
-name: CI Build and Test
+name: CI Build and Test, EC2 CD
 
 on:
   pull_request:
@@ -47,6 +47,7 @@ jobs:
 
 
   deploy:
+    needs: build_and_test
     runs-on: ubuntu-latest
     environment: production
 
