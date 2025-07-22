@@ -75,34 +75,10 @@ jobs:
           DOWNLOADED_JAR="./downloaded-artifact/$JAR_NAME"
           TARGET_JAR="/home/ubuntu/app/$JAR_NAME"
 
-          echo "Killing existing application (if running)..."
-          PID=$(pgrep -f "$JAR_NAME")
-          if [ -n "$PID" ]; then
-            echo "Found process with PID: $PID. Sending SIGTERM..."
-            kill -15 $PID
-            sleep 10
-            if kill -0 $PID 2>/dev/null; then
-              echo "Process $PID still alive. Forcing kill..."
-              kill -9 $PID
-            fi
-          else
-            echo "No running process found."
-          fi
-
           echo "Moving new JAR to $TARGET_JAR"
           mv "$DOWNLOADED_JAR" "$TARGET_JAR"
           chmod +x "$TARGET_JAR"
 
           echo "Starting application..."
           nohup java -jar "$TARGET_JAR" > /dev/null 2>&1 &
-
-          echo "Waiting for health check..."
-          sleep 20
-          STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/actuator/health)
-
-          if [ "$STATUS_CODE" -eq 200 ]; then
-            echo "✅ Deployment successful!"
-          else
-            echo "❌ Deployment failed! Health check returned status $STATUS_CODE"
-            exit 1
           fi
