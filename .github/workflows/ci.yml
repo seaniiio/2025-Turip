@@ -12,7 +12,7 @@ jobs: # on 상황에서 수행할 작업들 정의
      runs-on: ubuntu-latest # GitHub 호스팅 러너 사용
      defaults:
       run:
-        working-directory: backend
+        working-directory: ./backend
      steps: 
      - name: Checkout code
        uses: actions/checkout@v4 # 저장소 코드 체크아웃
