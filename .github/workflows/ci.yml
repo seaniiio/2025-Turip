@@ -8,9 +8,7 @@ on:
 jobs: # on 상황에서 수행할 작업들 정의
   build:
      runs-on: ubuntu-latest # GitHub 호스팅 러너 사용
-     defaults:
-      run:
-        working-directory: backend
+
      steps: 
      - name: Checkout code
        uses: actions/checkout@v4 # 저장소 코드 체크아웃
@@ -37,6 +35,20 @@ jobs: # on 상황에서 수행할 작업들 정의
         working-directory: backend
      needs: build
      steps:
+     - name: Debug - Verify working directory path
+       run: |
+         echo "Current working directory before any changes:"
+         pwd # 현재 스텝이 시작되는 디렉토리 (저장소 루트)
+          
+         echo "Listing contents of repository root:"
+         ls -la # 저장소 루트의 내용을 확인 (backend 디렉토리가 보이는지)
+          
+         echo "Listing contents of the expected backend directory:"
+         ls -la ./backend # backend 디렉토리 내부의 내용을 확인
+          
+         echo "Full path being used for working-directory:"
+         echo "/home/runner/work/${{ github.repository }}/backend" # YML에 설정된 최종 경로 예상
+     
      - name: Run Unit Tests
        run: ./gradlew test # 유닛 테스트 실행 (선택 사항, 빌드와 분리하여 명확성 확보)
 
