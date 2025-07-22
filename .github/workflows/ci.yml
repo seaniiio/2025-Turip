@@ -2,12 +2,12 @@ name: CI Build and Test
 
 on:
   pull_request:
-    types: [closed] # Pull Request가 닫힐 때 아래 jobs가 실행
+    types: [ closed ]
     branches: [ develop ]
     paths:
       - 'backend/**'
 
-jobs: # on 상황에서 수행할 작업들 정의
+jobs:
   build_and_test:
      runs-on: ubuntu-latest
      
@@ -17,18 +17,7 @@ jobs: # on 상황에서 수행할 작업들 정의
         
      steps: 
      - name: Checkout code
-       uses: actions/checkout@v4 # 저장소 코드 체크아웃
-
-          # --- 디버깅 스텝 (문제 해결 후 제거 가능) ---
-     - name: Debug - Verify actual checkout path
-       run: |
-         echo "--- Debug Info ---"
-         echo "Current directory after checkout (should be workspace root):"
-         pwd
-         echo "Expected working-directory path for 'run' steps (based on this config):"
-         echo "${{ github.workspace }}/backend"
-         echo "--- End Debug Info ---"
-      # --- 디버깅 스텝 끝 ---
+       uses: actions/checkout@v4
 
      - name: Set up Gradle
        uses: gradle/actions/setup-gradle@v3
@@ -41,17 +30,17 @@ jobs: # on 상황에서 수행할 작업들 정의
        with:
          java-version: '21'
          distribution: 'temurin'
-         cache: 'gradle' # Gradle 캐싱 설정 (선택 사항, 빌드 속도 향상)
+         cache: 'gradle'
        
      - name: Build with Gradle
-       run: ./gradlew clean build -x test # 테스트는 별도 스텝에서 실행하거나, 여기 포함 가능
+       run: ./gradlew clean build -x test
 
      - name: Run Unit Tests
-       run: ./gradlew test # 유닛 테스트 실행 (선택 사항, 빌드와 분리하여 명확성 확보)
+       run: ./gradlew test
 
      - name: Upload Jar
-       uses: actions/upload-artifact@v4 # 빌드된 JAR 파일을 아티팩트로 업로드
+       uses: actions/upload-artifact@v4
        with:
-         name: spring-boot-app # 아티팩트 이름
-         path: build/libs/*.jar # 빌드된 JAR 파일 경로
-         retention-days: 5 # 아티팩트 보존 기간 (선택 사항)
+         name: spring-boot-app
+         path: build/libs/*.jar
+         retention-days: 5
