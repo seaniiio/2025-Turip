@@ -10,10 +10,11 @@
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_turip_launcher"
-        android:label="@string/app_name"
+        android:label="${appName}"
         android:roundIcon="@mipmap/ic_turip_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Turip"
+        android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
             android:name=".ui.splash.SplashActivity"
@@ -28,7 +29,8 @@
             android:name=".ui.search.result.SearchResultActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.search.detail.SearchDetailActivity"
+            android:name=".ui.trip.detail.TripDetailActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="false" />
         <activity
             android:name=".ui.main.MainActivity"
