@@ -1,4 +1,4 @@
-name: 운영 서버 ci / cd 테슽
+name: 운영 ci/cd 테스트
 
 on:
   push:
@@ -49,7 +49,7 @@ jobs:
 
   deploy:
     needs: build_and_test
-    runs-on: self-hosted
+    runs-on: [self-hosted, ip-10-0-0-132]
     environment: production
     if: github.event_name == 'push'
 
