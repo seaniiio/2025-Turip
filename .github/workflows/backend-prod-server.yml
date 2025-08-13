@@ -1,4 +1,4 @@
-name: CI Build and Test, EC2 CD
+name: 운영 서버 ci / cd 테슽
 
 on:
   push:
