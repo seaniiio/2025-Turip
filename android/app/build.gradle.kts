@@ -5,6 +5,9 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.ktlint)
     kotlin("plugin.serialization") version "2.1.0"
+    id("com.google.gms.google-services")
+    id("com.google.firebase.crashlytics")
+    id("kotlin-kapt")
 }
 
 android {
@@ -95,4 +98,16 @@ dependencies {
     implementation(libs.coil)
     // WebView
     implementation(libs.androidx.webkit)
+    // Timber
+    implementation(libs.timber)
+    // firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.crashlytics.ndk)
+    implementation(libs.firebase.installations)
+    // datastore
+    implementation(libs.androidx.datastore.preferences)
+    // Room
+    implementation(libs.androidx.room.runtime)
+    kapt(libs.androidx.room.compiler)
 }
