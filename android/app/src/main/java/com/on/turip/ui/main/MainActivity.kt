@@ -3,85 +3,97 @@ package com.on.turip.ui.main
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.text.SpannableString
-import android.text.Spanned
-import android.text.style.BackgroundColorSpan
-import androidx.activity.viewModels
-import androidx.core.content.ContextCompat
+import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.commit
 import com.on.turip.R
 import com.on.turip.databinding.ActivityMainBinding
 import com.on.turip.ui.common.base.BaseActivity
-import com.on.turip.ui.common.model.RegionModel
+import com.on.turip.ui.main.favorite.FavoriteFragment
+import com.on.turip.ui.main.home.HomeFragment
 
-class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
-    override val viewModel: MainViewModel by viewModels()
-
+class MainActivity : BaseActivity<ActivityMainBinding>() {
     override val binding: ActivityMainBinding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
-
-    private val metropolitanCitiesAdapter: RegionAdapter =
-        RegionAdapter(
-            object : RegionViewHolder.OnRegionListener {
-                override fun onRegionClick(region: RegionModel) {
-                    // TODO: 지역 검색 결과 뷰로 이동
-                }
-            },
-        )
-    private val provincesAdapter: RegionAdapter =
-        RegionAdapter(
-            object : RegionViewHolder.OnRegionListener {
-                override fun onRegionClick(region: RegionModel) {
-                    // TODO: 지역 검색 결과 뷰로 이동
-                }
-            },
-        )
+    private var backPressedTime: Long = 0L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setupTextHighlighting()
-        setupAdapters()
-        setupObservers()
+        handleDoubleBackPressToExit()
+        initBottomNavigation()
+        setupBottomNavigation()
+
+        if (savedInstanceState == null) {
+            binding.bnvMain.selectedItemId = R.id.menu_fragment_home
+        }
     }
 
-    private fun setupTextHighlighting() {
-        val originalText: String = getString(R.string.main_where_should_we_go_title)
-        val highlightText: String = getString(R.string.main_where_should_we_go_highlighting)
-        val startIndex: Int = originalText.indexOf(highlightText)
-        val endIndex: Int = startIndex + highlightText.length
+    private fun initBottomNavigation() {
+        binding.bnvMain.itemIconTintList = null
 
-        val spannableText =
-            SpannableString(originalText).apply {
-                setSpan(
-                    BackgroundColorSpan(
-                        ContextCompat.getColor(
-                            this@MainActivity,
-                            R.color.turip_lemon_faff60_50,
-                        ),
-                    ),
-                    startIndex,
-                    endIndex,
-                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
-                )
+        binding.bnvMain.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.menu_fragment_home -> {
+                    HomeFragment::class.java.let { switchFragment(it, it.simpleName) }
+                    return@setOnItemSelectedListener true
+                }
+
+                R.id.menu_fragment_favorite -> {
+                    FavoriteFragment::class.java.let { switchFragment(it, it.simpleName) }
+                    return@setOnItemSelectedListener true
+                }
+
+                else -> return@setOnItemSelectedListener false
             }
-
-        binding.tvMainWhereShouldWeGoTitle.text = spannableText
+        }
     }
 
-    private fun setupAdapters() {
-        binding.rvMainMetropolitanCity.adapter = metropolitanCitiesAdapter
-        binding.rvMainProvince.adapter = provincesAdapter
+    private fun setupBottomNavigation() {
+        binding.bnvMain.setOnApplyWindowInsetsListener(null)
     }
 
-    private fun setupObservers() {
-        viewModel.metropolitanCities.observe(this) { metropolitanCities: List<RegionModel> ->
-            metropolitanCitiesAdapter.submitList(metropolitanCities)
-        }
+    private fun switchFragment(
+        target: Class<out Fragment>,
+        tag: String,
+    ) {
+        val fragments = supportFragmentManager.fragments
+        val targetFragment = supportFragmentManager.findFragmentByTag(tag)
 
-        viewModel.provinces.observe(this) { provinces: List<RegionModel> ->
-            provincesAdapter.submitList(provinces)
+        if (targetFragment?.isVisible == true) return
+
+        supportFragmentManager.commit {
+            fragments.filter { it.isVisible }.forEach { hide(it) }
+
+            if (targetFragment == null) {
+                add(R.id.fcv_main, target, null, tag)
+            } else {
+                show(targetFragment)
+            }
         }
+    }
+
+    private fun handleDoubleBackPressToExit() {
+        onBackPressedDispatcher.addCallback(
+            this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    if (System.currentTimeMillis() - backPressedTime <= 2000) {
+                        finish()
+                    } else {
+                        backPressedTime = System.currentTimeMillis()
+                        Toast
+                            .makeText(
+                                this@MainActivity,
+                                getString(R.string.main_double_back_pressed_to_exit),
+                                Toast.LENGTH_SHORT,
+                            ).show()
+                    }
+                }
+            },
+        )
     }
 
     companion object {

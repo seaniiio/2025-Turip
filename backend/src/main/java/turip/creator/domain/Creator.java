@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@EqualsAndHashCode
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Creator {
 
@@ -23,4 +23,9 @@ public class Creator {
     private String channelName;
 
     private String profileImage;
+
+    public Creator(String channelName, String profileImage) {
+        this.channelName = channelName;
+        this.profileImage = profileImage;
+    }
 }
