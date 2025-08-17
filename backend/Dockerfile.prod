@@ -3,4 +3,4 @@ FROM gradle:8.8-jdk21 AS builder
 ARG JAR_FILE=/build/libs/*.jar
 COPY ${JAR_FILE} app.jar
 
-ENTRYPOINT ["java", "-Dspring.profiles.active=dev", "-jar", "app.jar"] # 나중에 프로필 바꿔야 함
+ENTRYPOINT ["java", "-Dspring.profiles.active=dev", "-jar", "app.jar"]
