@@ -35,6 +35,9 @@ jobs:
          distribution: 'temurin'
          cache: 'gradle'
 
+     - name: Build JAR
+       run: ./gradlew clean build -x test
+
      # - name: Run Unit Tests
      #   run: ./gradlew test
 
