@@ -55,7 +55,7 @@ jobs:
 
   deploy:
     needs: build_and_test
-    runs-on: self-hosted
+    runs-on: [self-hosted, turip-test-dev]
     if: github.event_name == 'push'
 
     steps:
@@ -67,7 +67,7 @@ jobs:
 
       - name: Pull and Run Docker container
         run: |
-          IMAGE_NAME=${{ secrets.DOCKERHUB_USERNAME }}/turip-server:dev-${{ github.sha }}
+          IMAGE_NAME=seaniiii/turip-server:dev-${{ github.sha }}
           docker pull $IMAGE_NAME
 
           # 기존 컨테이너 정리
