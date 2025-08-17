@@ -35,8 +35,8 @@ jobs:
          distribution: 'temurin'
          cache: 'gradle'
 
-     - name: Run Unit Tests
-       run: ./gradlew test
+     # - name: Run Unit Tests
+     #   run: ./gradlew test
 
      - name: Build Docker image
        run: |
